@@ -6,6 +6,8 @@ Rails.application.routes.draw do
   patch '/users/:id/update_ta_application' => 'users#update_ta_application', :as => :update_ta_application
   post '/users/:id/create_ta_application' => 'users#create_ta_application', :as => :create_ta_application
   get '/users/:id/withdraw_application' => 'users#withdraw_student_application', :as => :withdraw_student_application
+  get '/users/:id/request_new_ta' => 'users#request_new_ta', :as => :request_new_ta
+  get '/users/:id/assign_request_new_ta' => 'users#assign_request_new_ta', :as => :assign_request_new_ta
 
   get '/users/:id/accept_assignment' => 'users#accept_ta_assignment', :as => :accept_ta_assignment
   get '/users/:id/reject_assignment' => 'users#reject_ta_assignment', :as => :reject_ta_assignment

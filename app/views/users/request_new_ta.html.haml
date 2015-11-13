@@ -1,0 +1,87 @@
+%p#notice=notice
+
+.row
+  .col-xs-12
+    %h1{class:"text-left"}="Request TA for #{@course.name}"
+
+.divide20
+
+= form_tag assign_request_new_ta_path, :method => :get, :id => 'tas_form' do
+  =hidden_field_tag 'course_id', @course.id
+  %table#studentapplications.table.table-striped
+    %thead
+      %tr
+        %th Select
+        %th Student UIN
+        %th Name
+        %th GPA
+        %th Degree Program
+        %th Applied Term
+        %th Detail
+    - @studentapplications.each do |studentapplication|
+      %tbody
+        %tr
+          -if @assignable[studentapplication.id]
+            %td= check_box_tag "ids[#{studentapplication.id}]", :id => "ids_#{studentapplication.id}"
+          -else
+            %td
+          %td= studentapplication.uin
+          %td= studentapplication.fullName()
+          %td= studentapplication.gpa
+          %td
+            - case studentapplication.degree
+              - when StudentApplication::UNDERGRAD
+                Undergraduate
+              - when StudentApplication::MENG
+                M.Eng
+              - when StudentApplication::MS
+                MS
+              - when StudentApplication::PHD
+                PHD
+          %td= ApplicationPool::getAppPoolYearSemester studentapplication.application_pool_id
+          %td= link_to 'Detail', "#myModal", "data-toggle" => "modal",  "data-target" => "#myModal-#{studentapplication.id}"
+  = submit_tag 'Assign', :id => 'assign_ta', class:'btn btn-primary'
+
+- @studentapplications.each do |studentapplication|
+  %div{class:"modal fade", "id" => "myModal-#{studentapplication.id}", "tabindex" => "-1", "role" => "dialog",  "aria-labelledby" => "myModalLabel"}
+    %div{class:"modal-dialog", :role => "document"}
+      %div{class:"modal-content"}
+        %div{class:"modal-header"} 
+          %h2 #{studentapplication.fullName()}'s Application Form
+        %div{class:"modal-body"}
+          %table#studentapplication.table.table-striped
+            %thead
+              %tr
+                %th Field
+                %th Info
+            %tbody
+              %tr
+                %td UIN
+                %td= studentapplication.uin
+              %tr
+                %td Name
+                %td= studentapplication.fullName()
+              %tr
+                %td Advisor
+                %td= studentapplication.advisor
+              %tr
+                %td Degree
+                %td
+                  - case studentapplication.degree
+                    - when StudentApplication::UNDERGRAD
+                      Undergraduate
+                    - when StudentApplication::MENG
+                      M.Eng
+                    - when StudentApplication::MS
+                      MS
+                    - when StudentApplication::PHD
+                      PHD
+              %tr
+                %td GPA
+                %td= studentapplication.gpa
+              %tr
+                %td Course Taken
+                %td= studentapplication.course_taken
+              %tr
+                %td Course TAed
+                %td= studentapplication.course_taed

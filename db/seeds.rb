@@ -14,7 +14,8 @@ StudentApplication.delete_all()
 users = [{:name => 'user1', :uin => '922003095', :email => 'test1@gmail.com', :login => 'login1'},
           {:name => 'user2', :uin => '922773022', :email => 'test2@gmail.com', :login => 'login1'},
           {:name => 'user3', :uin => '922773023', :email => 'test3@gmail.com', :login => 'login1'},
-          {:name => 'user4', :uin => '922773024', :email => 'test3@gmail.com', :login => 'login1'}]
+          {:name => 'user4', :uin => '922773024', :email => 'test3@gmail.com', :login => 'login1'},
+          {:name => 'user5', :uin => '111111111', :email => 'test3@gmail.com', :login => 'login1'}]
 
 users.each do |user|
   User.create!(user)
@@ -62,7 +63,8 @@ courses = [
     ta: "N/A",
     credits: 3,
     :application_pool_id => '1',
-    notes: ""
+    notes: "",
+    user_id: 5
   },
   {
     cid: "CSCE111",
@@ -74,7 +76,8 @@ courses = [
     ta: "N/A",
     credits: 3,
     :application_pool_id => '1',
-    notes: ""
+    notes: "",
+    user_id: 5
   },
   {
     cid: "CSCE121",

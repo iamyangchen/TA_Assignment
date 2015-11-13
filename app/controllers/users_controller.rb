@@ -31,6 +31,22 @@ class UsersController < ApplicationController
         end
       end
     end
+
+    @courses = Course.where(user_id: @user.id)
+    @courses_ta = Hash.new 
+    @ta_status = Hash.new
+    @courses.each do |course|
+      tadata_matching = AppCourseMatching.where(course_id: course.id)
+      tadata_ids = Array.new
+      tadata_status = Hash.new 
+      tadata_matching.each do |matching|
+        tadata_ids << matching.student_application_id
+        tadata_status[matching.student_application_id] = {'status' => matching.status, 'position' => matching.position}
+      end
+      tadata = StudentApplication.where(id: tadata_ids)  # This will return one list
+      @courses_ta[course.id] = tadata
+      @ta_status[course.id] = tadata_status    
+    end
   end
 
   # GET /users/new
@@ -80,6 +96,44 @@ class UsersController < ApplicationController
       format.html { redirect_to users_url, notice: 'User was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
+
+  def request_new_ta
+    @user = User.find params[:id]
+    @course = Course.find params[:course_id]
+    @studentapplications = StudentApplication.where(application_pool_id: @course.application_pool_id)
+    @assignable = Hash.new 
+    @studentapplications.each do |studentapplication|
+      if AppCourseMatching.exists?(application_pool_id: @course.application_pool_id, student_application_id: studentapplication.id)
+        @assignable[studentapplication.id] = false
+      else
+        @assignable[studentapplication.id] = true
+      end
+    end
+  end
+
+  def assign_request_new_ta
+    id = params[:course_id]
+    @course = Course.find(id)
+    if params[:ids]
+      new_tas = params[:ids].keys
+      if not new_tas.empty?
+        new_tas.each do |ta_id|
+          @studentapplication = StudentApplication.find ta_id
+          
+          requesters = @studentapplication.requester
+          if not requesters
+            @studentapplication.requester = @course.id.to_s
+          else
+            @studentapplication.requester = @studentapplication.requester + ',' + @course.id.to_s
+          end
+
+          @studentapplication.save
+        end
+      end
+    end
+    flash[:notice] = "Successfully request TA for #{@course.name} requesters: #{@studentapplication.requester}"
+    redirect_to user_path(params[:id])
   end
 
   def new_application

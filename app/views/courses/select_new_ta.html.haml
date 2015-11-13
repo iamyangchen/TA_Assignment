@@ -92,6 +92,15 @@
                                   %span{class:"label label-danger"}="Unknown"
                       -else
                         %p Under Review
+                    -if @student_application_info[studentapplication.id].has_key?('requesters')
+                      %p Requesters
+                      %ul.list-group
+                        %li.list-group-item
+                          .row
+                            -@student_application_info[studentapplication.id]['requesters'].each do |student_status|
+                              .col-xs-4= student_status['Course']
+                              .col-xs-3= student_status['Lecturer']
+
   = submit_tag 'Assign', :id => 'assign_ta', class:'btn btn-primary'
 
   / %table#studentapplications.table.table-striped

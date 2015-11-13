@@ -85,7 +85,78 @@
               .col-xs-2
                 =link_to('Accept', accept_ta_assignment_path(:id => @user.id, :match_id => status['Matching_id'])) + ' / ' + link_to('Reject', reject_ta_assignment_path(:match_id => status['Matching_id']))
 
+%hr
+.col-xs-12
+  %h2{class:"text-left"}="Course Status"
 
+.row
+  .col-xs-12
+    .panel.panel-default.remove-margin.pseudo-table-heading
+      / .panel-heading Panel heading without title
+      .panel-body
+        .col-xs-2 
+          %b Course ID
+        .col-xs-4 
+          %b Course Name
+        .col-xs-2 
+          %b Operations
+
+.row
+  .col-xs-12
+    #accordion.panel-group{"aria-multiselectable" => "true", :role => "tablist"}
+      
+      // .panel-default as table row
+      - @courses.each do |course|
+
+        .panel.panel-default  
+          .panel-heading{:role => "tab"}
+            .row{"aria-controls" =>"collapse#{course.id}", "aria-expanded" => "true", "data-parent" => "#accordion", "data-toggle" => "collapse", "data-target" => "#collapse#{course.id}", :role => "button", :id=> "heading#{course.id}"}
+              .col-xs-2.td=course.id
+              .col-xs-4.td=course.name
+              .col-xs-2.td
+                %a{:href=> request_new_ta_path(:id => @user.id, :course_id => course.id) , :class => "btn btn-primary"} Request TA
+                
+
+          .panel-collapse.collapse{"aria-labelledby" => "heading#{course.id}", :role => "tabpanel", :id=> "collapse#{course.id}"}
+            .panel-body
+              .row
+                .col-xs-10.col-xs-offset-1
+                  - if @courses_ta[course.id].length() > 0
+                    %ul.list-group
+
+                    -@courses_ta[course.id].each do |ta|
+
+                      %li.list-group-item
+                        .row
+                          .col-xs-2
+                            %a{ "data-toggle" => "modal",  "data-target" => "#myModal-#{course.id}-#{ta.id}"}=ta.fullName()
+                          .col-xs-2
+                            -case @ta_status[course.id][ta.id]['position']
+                              -when AppCourseMatching::FULLTA
+                              Full TA
+                              -when AppCourseMatching::HALFTA
+                              Half TA
+                          .col-xs-3 
+                            - case @ta_status[course.id][ta.id]['status']
+                              - when StudentApplication::UNDER_REVIEW
+                                %span{class:"label label-default"}="Under Review"
+                              - when StudentApplication::TEMP_ASSIGNED
+                                %span{class:"label label-primary"}="Temporary Assigned"
+                              - when StudentApplication::EMAIL_NOTIFIED
+                                %span{class:"label label-primary"}="Email Notified"
+                              - when StudentApplication::STUDENT_CONFIRMED
+                                %span{class:"label label-success"}="Student Confirmed"
+                              - when StudentApplication::STUDENT_REJECTED
+                                %span{class:"label label-warning"}="Student Rejected"
+                              - when StudentApplication::ASSIGNED
+                                %span{class:"label label-success"}="Assigned"
+                              - else
+                                %span{class:"label label-danger"}="Unknown"
+                          .col-xs-5=link_to('Email', email_ta_notification_path(:id => course.id, :ta_id => ta.id)) +' / ' + link_to('Confirm', confirm_ta_path(:id => course.id, :ta_id => ta.id)) +' / ' +link_to('Delete', delete_ta_path(:id => course.id, :ta_id => ta.id))
+
+
+                  - else
+                    %p No TA assigned yet for this course    
 
 %hr
 .row
@@ -110,6 +181,8 @@
             =link_to('Apply', new_application_path(:id => @user.id, :term_id => application_pool.id), class:"btn btn-primary btn-xs")
           -else
             =link_to('Show', "#myModal", "data-toggle" => "modal",  "data-target" => "#myModal-#{application_pool.id}", class:"btn btn-primary btn-xs")+ ' / '  + link_to('Edit', edit_ta_application_path(:id => @user.id, :app_id => @studentapplications[application_pool.id].id), class:"btn btn-primary btn-xs")  + ' / '  + link_to('Withdraw', withdraw_student_application_path(:id => @user.id, :app_id => @studentapplications[application_pool.id].id),class:"btn btn-primary btn-xs", "data-confirm" => "Withdraw application for #{application_pool.year} #{application_pool.semester}?")
+
+
 
 
 = link_to 'Back', users_path
