@@ -10,12 +10,12 @@
     // We will not hard code 2015 fall here in furture
     %h1{class:"text-left"}=ApplicationPool.getAppPoolYearSemester(@application_pool_id) + " Courses Overview"
 .row
-  .col-xs-9.semester-tab-container
-    %ul.nav.nav-tabs
-      - available_semesters = [{"semester" => "Fall", "year" => "2015"}, {"semester" => "Spring", "year" => "2016"},{"semester" => "Summer", "year" => "2016"},{"semester" => "Fall", "year" => "2016"}]
-      - @available_semesters.each do | semester_hash|
-        %li{"role"=>"presentation", :class => "#{ 'active' if params[:semester] ==semester_hash["semester"] && params[:year]==semester_hash["year"]}"}
-          %a{"href"=> courses_path({"semester":semester_hash["semester"],"year":semester_hash["year"]})}=semester_hash["year"] + " " + semester_hash["semester"]
+  / .col-xs-9.semester-tab-container
+  /   %ul.nav.nav-tabs
+  /     - available_semesters = [{"semester" => "Fall", "year" => "2015"}, {"semester" => "Spring", "year" => "2016"},{"semester" => "Summer", "year" => "2016"},{"semester" => "Fall", "year" => "2016"}]
+  /     - @available_semesters.each do | semester_hash|
+  /       %li{"role"=>"presentation", :class => "#{ 'active' if params[:semester] ==semester_hash["semester"] && params[:year]==semester_hash["year"]}"}
+  /         %a{"href"=> courses_path({"semester":semester_hash["semester"],"year":semester_hash["year"]})}=semester_hash["year"] + " " + semester_hash["semester"]
   .col-xs-3.two-buttons-container
     .two-buttons
       =link_to "New Course",new_course_path(:pool_id => @application_pool_id),class:"btn btn-primary"
