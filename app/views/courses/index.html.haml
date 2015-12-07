@@ -13,8 +13,12 @@
   .col-xs-9.semester-tab-container
     %ul.nav.nav-tabs
       - @available_semesters.each do | semester_hash|
-        %li{"role"=>"presentation", :class => "#{ 'active' if params[:semester] ==semester_hash[:semester] && params[:year]==semester_hash[:year]}"}
-          %a{"href"=> courses_path({"semester":semester_hash["semester"],"year":semester_hash["year"]})}=semester_hash["year"] + " " + semester_hash["semester"]
+        -if (params[:semester] == semester_hash["semester"]  && params[:year] == semester_hash["year"])
+          %li{"role"=>"presentation", :class => "active"}
+            %a{ "href"=> courses_path( {"semester"=>semester_hash["semester"],"year"=>semester_hash["year"] } ) }=semester_hash["year"] + " " + semester_hash["semester"]
+        -else
+          %li{"role"=>"presentation", :class => ""}
+            %a{"href"=> courses_path({"semester"=>semester_hash["semester"],"year"=>semester_hash["year"]})}=semester_hash["year"] + " " + semester_hash["semester"]
   .col-xs-3.two-buttons-container
     .two-buttons
       =link_to "New Course",new_course_path(:pool_id => @application_pool_id),class:"btn btn-primary"
